@@ -1,0 +1,8 @@
+runtime: nodejs8 
+
+instance_class: F2
+
+env_variables:
+  ENV: "development"
+  DATABASE: "mongodb://1punto5:danaleger15@ds129821.mlab.com:29821/1puntocinco"
+

@@ -2,16 +2,12 @@ const express = require('express');
 const router  = express.Router();
 const User    = require('../models/User');
 
-/* GET home page */
-router.get('/', (req, res) => {
-  res.render('index');
-});
 
 
 // 1) Servicio que permita la creación de un nuevo usuario 
 // donde se vincule a un rol y al menos un permiso.
 
-router.post('newuser',(req,res) => {
+router.post('/newuser',(req,res) => {
   User.find({$or:[{email:req.body.email},{userName:req.body.userName}]})
     .then( existingUser => {
       if(!existingUser[0]){
@@ -47,7 +43,7 @@ router.post('newuser',(req,res) => {
 
 // 2) Servicio que liste todos los usuarios existentes.
 
-router.get('allusers',(req,res)=>{
+router.get('/allusers',(req,res)=>{
   User.find()
   .then(users=>{
       res.json({
@@ -66,7 +62,7 @@ router.get('allusers',(req,res)=>{
 
 // 3) Servicio que liste todos los usuarios que pertenezcan a un rol determinado, 
 // por ejemplo obtención del listado de los usuarios que sean operadores.
-router.get('usersrole',(req,res)=>{
+router.get('/usersrole',(req,res)=>{
   // EL ROL LO PODEMOS TRAER POR MEDIO DE QUERY
   let roleQuery = req.query.role;
   // POR MEDIO DEL BODY 
@@ -93,10 +89,10 @@ router.get('usersrole',(req,res)=>{
 // 4) Servicio que permita listar los usuarios que cuenten con algún permiso en particular, 
 // ejemplo los usuarios que tengan el permiso 'Activar'.
 
-router.get('userspermissions',(req,res)=>{
+router.get('/userspermissions',(req,res)=>{
   let permissionQuery = req.query.permission;
   let permissionBody = req.body.permission;
-  let permissionDefault = 'ACTIVAR'
+  let permissionDefault = 'LEER'
   User.find({permissions:permissionDefault})
     .then( users => {
       res.json({
@@ -114,7 +110,7 @@ router.get('userspermissions',(req,res)=>{
 
 // 5) Servicio que permita listar a todos aquellos usuarios activos.
 
-router.get('usersactives',(req,res)=>{
+router.get('/usersactives',(req,res)=>{
   User.find({active:true})
     .then( users => {
       res.json({
@@ -133,7 +129,7 @@ router.get('usersactives',(req,res)=>{
 
 // 6) Servicio que permita listar a todos aquellos usuarios inactivo
 
-router.get('usersinactives',(req,res)=>{
+router.get('/usersinactives',(req,res)=>{
   User.find({active:false})
     .then( users => {
       res.json({
@@ -151,10 +147,10 @@ router.get('usersinactives',(req,res)=>{
 
 // 7) Servicio que permita la actualización de un usuario.
 
-router.post('userupdate/:id',(req,res)=>{
+router.post('/userupdate/:id',(req,res)=>{
   let idUser = req.params.id;
   let newData = req.body;
-  User.findByIdAndUpdate(isUser, newData , {new:true})
+  User.findByIdAndUpdate(idUser, newData , {new:true})
     .then( user => {
       res.json({
         succes: true,
@@ -170,7 +166,7 @@ router.post('userupdate/:id',(req,res)=>{
 
 // 8) Servicio que permita visualizar la información de un usuario dado su identificador.
 
-router.get('user/:id' ,(req,res)=>{
+router.get('/user/:id' ,(req,res)=>{
   let userId = req.params.id;
   User.findById(userId)
     .then(user=>{
@@ -190,7 +186,7 @@ router.get('user/:id' ,(req,res)=>{
 
 // 9) Servicio que permita la eliminación de un usuario.
 
-router.delete('userdelete/:id',(req,res,next)=>{
+router.delete('/userdelete/:id',(req,res,next)=>{
   let idParams = req.params.id
   User.findOneAndRemove({_id:idParams})
     .then(user=>{

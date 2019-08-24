@@ -8,11 +8,12 @@ const hbs          = require('hbs');
 const mongoose     = require('mongoose');
 const logger       = require('morgan');
 const path         = require('path');
+const cors         = require("cors");
 
 
 mongoose.Promise = Promise;
 mongoose
-  .connect('mongodb://localhost/inntevachallenge', {useMongoClient: true})
+  .connect(process.env.DATABASE)
   .then(() => {
     console.log('Connected to Mongo!')
   }).catch(err => {
@@ -23,6 +24,15 @@ const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
 
 const app = express();
+
+//CORS
+const options = {
+  origin: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  exposedHeaders: ['x-auth-token']
+}
+app.use(cors(options));
 
 // Middleware Setup
 app.use(logger('dev'));
@@ -47,12 +57,15 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 
 // default value for title local
-app.locals.title = 'Express - Generated with IronGenerator';
+app.locals.title = 'Prueba Innteva / Germán Gutiérrez';
 
 
 
 const index = require('./routes/index');
 app.use('/', index);
+
+const routes = require('./routes/routes');
+app.use('/routes', routes);
 
 
 module.exports = app;
